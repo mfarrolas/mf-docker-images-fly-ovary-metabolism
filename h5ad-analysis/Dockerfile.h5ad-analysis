@@ -1,0 +1,22 @@
+# Use Python 3.8 as the base image
+FROM python:3.8-slim
+
+# Install required system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python packages for h5ad file analysis
+RUN pip install --no-cache-dir \
+    anndata \
+    scanpy \
+    pandas \
+    numpy \
+    matplotlib \
+    seaborn
+
+# Set the working directory
+WORKDIR /workspace
+
+# Set the default command
+CMD ["python"]
