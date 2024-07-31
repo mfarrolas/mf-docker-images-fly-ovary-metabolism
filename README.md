@@ -8,7 +8,7 @@ This repository contains Docker images for different Python environments, tailor
 Tag: `mfarrolas/mf-docker-python-packages:base`
 
 - Python 3.8
-- Numpy, Pandas, Scipy, Scikit-learn, Matplotlib
+- Numpy, Pandas, Scipy, Matplotlib
 
 ## Usage
 
