@@ -1,4 +1,16 @@
+# Use Python 3.8 as the base image
 FROM python:3.8-slim
 
-# Install essential packages
-RUN pip install --no-cache-dir numpy pandas matplotlib scipy
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python packages
+RUN pip install --no-cache-dir numpy pandas scipy
+
+# Set the working directory
+WORKDIR /workspace
+
+# Default command
+CMD ["python"]
