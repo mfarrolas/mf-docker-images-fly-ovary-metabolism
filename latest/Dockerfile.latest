@@ -1,0 +1,68 @@
+# Use Python slim variant with R for bioinformatics
+FROM python:3.11-slim
+
+# Metadata
+LABEL maintainer="Manuel Farrolas <luis.farrolas@gimm.pt>"
+LABEL description="Containerized environment for single-cell analysis with Python and R (non-interactive, SLURM compatible)"
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONUNBUFFERED=1 \
+    PATH="/opt/miniconda/bin:$PATH" \
+    RETICULATE_PYTHON="/opt/miniconda/envs/sc_analysis_env/bin/python"
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libffi-dev \
+    libpq-dev \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libxml2-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    liblzma-dev \
+    libgsl-dev \
+    r-base \
+    r-base-dev \
+    git \
+    curl \
+    wget \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install Miniconda
+RUN curl -fsSL https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda.sh && \
+    bash miniconda.sh -b -p /opt/miniconda && \
+    rm miniconda.sh && \
+    /opt/miniconda/bin/conda init bash
+
+# Copy the environment.yml file and install the Conda environment
+COPY environment.yml /workspace/environment.yml
+SHELL ["/bin/bash", "--login", "-c"]
+RUN conda env create -f /workspace/environment.yml && \
+    conda clean -a
+
+# Install additional system dependencies for R packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libxml2-dev \
+    zlib1g-dev \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Copy and install R packages
+COPY R_packages.R /workspace/R_packages.R
+RUN Rscript /workspace/R_packages.R
+
+# Set Conda environment as default
+RUN echo "conda activate sc_analysis_env" >> ~/.bashrc
+
+# Set working directory
+WORKDIR /workspace
+
+# Copy additional files
+COPY . .
+
+# Default entrypoint for non-interactive execution
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["conda run -n sc_analysis_env $@"]

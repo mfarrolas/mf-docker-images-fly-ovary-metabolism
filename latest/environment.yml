@@ -1,0 +1,45 @@
+name: sc_analysis_env
+channels:
+  - pytorch
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  # Core Python environment
+  - python=3.11
+
+  # Essential Machine Learning and Deep Learning Frameworks
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-lightning  # High-level PyTorch for training
+  - torchmetrics  # Metrics for PyTorch models
+
+  # Single-cell analysis tools
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - scanpy
+  - anndata
+  - scvelo
+  - cellrank
+  - h5py
+  - loompy
+  - leidenalg
+  - bbknn
+  - umap-learn
+  - tqdm
+  - pysam
+  - pyfaidx
+  - biopython
+  - gffutils
+  - pyscenic
+  - harmonypy
+  - scvi-tools
+
+  # pip-based installation for unsupported packages
+  - pip:
+      - screcode
